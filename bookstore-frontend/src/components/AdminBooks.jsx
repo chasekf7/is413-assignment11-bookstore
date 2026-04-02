@@ -16,7 +16,7 @@ const AdminBooks = () => {
     price: ''
   });
 
-  const API_BASE_URL = 'http://localhost:5149/api';
+  const API_BASE_URL = 'https://chasekf7-bookstore-api.azurewebsites.net/api';
 
   useEffect(() => {
     fetchAllBooks();
