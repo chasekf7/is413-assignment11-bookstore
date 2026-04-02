@@ -1,0 +1,39 @@
+name: Restart Azure App Daily
+
+on:
+  # Run automatically every day at 8 AM UTC (3 AM EST / 12 AM PST)
+  schedule:
+    - cron: '0 8 * * *'
+
+  # Allow manual trigger from GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  restart-app:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Start Azure Web App
+        run: |
+          az webapp start --name chasekf7-bookstore-api --resource-group bookstore-rg
+          echo "Azure Web App started successfully!"
+
+      - name: Wait for App to Start
+        run: sleep 30
+
+      - name: Test API Endpoint
+        run: |
+          echo "Testing API endpoint..."
+          curl -I https://chasekf7-bookstore-api.azurewebsites.net/api/books || echo "API not ready yet"
+
+      - name: Display URLs
+        run: |
+          echo "=========================================="
+          echo "Frontend: https://zealous-water-0e245df0f-preview.eastus2.2.azurestaticapps.net"
+          echo "Backend: https://chasekf7-bookstore-api.azurewebsites.net/api"
+          echo "=========================================="
